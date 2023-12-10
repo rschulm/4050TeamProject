@@ -72,6 +72,7 @@ struct Triangle {
 
 
 int pointCount;
+int numStepsY, numStepsTheta;
 
 void generateHalfCircle(std::vector<float>& coordinates, int numStepsY, int radius, int numStepsTheta) {
     pointCount = numStepsY * numStepsTheta; // Total number of points now
@@ -119,22 +120,18 @@ void calculateNormals(const std::vector<Triangle>& triangles, std::vector<glm::v
 
 
 
+//GLfloat*
 
-void calculateTextureCoordinates(const GLfloat* vertexList, std::vector<glm::vec2>& texCoordsVector, int numStepsTheta, int radius) {
+void calculateTextureCoordinates(Point (*Point)[numStepsTheta] pointArray, std::vector<glm::vec2>& texCoordsVector, int numStepsTheta, int radius) {
     texCoordsVector.clear();
 
-    for (int i = 0; i < pointCount / 3; i++) {
-        float j = i%numStepsTheta;
-        float y = vertexList[i * 3 + 1];
+    for (int i = 0; i < numStepsY; i++) {
+		for(int j = 0; j < numStepsTheta; j++) {
+			float u = (j*(2*M_PI/numStepsTheta)) / (2.0 * M_PI);
+			float v = pointArray[i][j].y;
 
-        // Map polar coordinates to texture coordinates
-        float u = (j*(2*M_PI/numStepsTheta)) / (2.0 * M_PI);
-        float v = y;
-
-        texCoordsVector.push_back(glm::vec2(u, v));
-
-	
-	    		
+			texCoordsVector.push_back(glm::vec2(u, v));
+		}	    		
     }
 }
 
@@ -142,7 +139,7 @@ void calculateTextureCoordinates(const GLfloat* vertexList, std::vector<glm::vec
 void loadSurfaceOfRevolution() 
 {
 
-    int numStepsY, numStepsTheta;
+    //int numStepsY, numStepsTheta;
 
     // Prompt the user for the number of steps along the y dimension
     std::cout << "Enter the number of steps along the y dimension: ";
@@ -273,7 +270,7 @@ void loadSurfaceOfRevolution()
 	// [HINT] there are two texture coordinates instead of three vertex coordinates for each vertex
 	
 	std::vector<glm::vec2> texCoordsVector;
-	calculateTextureCoordinates(vertexList, texCoordsVector, numStepsTheta, radius);
+	calculateTextureCoordinates(pointArray, texCoordsVector, numStepsTheta, radius);
 
 
 	GLuint texCoord_vbo;
