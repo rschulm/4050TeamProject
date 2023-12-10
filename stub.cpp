@@ -124,18 +124,33 @@ void calculateTextureCoordinates(const GLfloat* vertexList, std::vector<glm::vec
     texCoordsVector.clear();
 
     for (int i = 0; i < pointCount / 3; i++) {
-        float x = vertexList[i * 3];
-        float z = vertexList[i * 3 + 2];
-
-        // Calculate polar coordinates
-        float theta = atan2(z, x) + M_PI; // Map to [0, 2*pi]
-        float phi = asin(z / radius) + M_PI / 2.0; // Map to [0, pi]
+        float j = i%numStepsTheta;
+        float y = vertexList[i * 3 + 1];
 
         // Map polar coordinates to texture coordinates
-        float u = theta / (2.0 * M_PI);
-        float v = phi / M_PI;
+        float u = (j*(2*M_PI/numStepsTheta)) / (2.0 * M_PI);
+        float v = y;
 
         texCoordsVector.push_back(glm::vec2(u, v));
+
+	
+	    		vt[tIndex+0] = (j*(2*M_PI/stepsT))/(2*M_PI); //u value (theta)
+			vt[tIndex+1] = (Pij[1]+1)/2; //v value
+
+			vt[tIndex+2] = (j+1)*(2*M_PI/stepsT)/(2*M_PI); //u value (theta)
+			vt[tIndex+3] = (Piijj[1]+1)/2; //v value
+
+			vt[tIndex+4] = (j+1)*(2*M_PI/stepsT)/(2*M_PI); //u value (theta)
+			vt[tIndex+5] = (Pijj[1]+1)/2; //v value
+
+			vt[tIndex+6] = j*(2*M_PI/stepsT)/(2*M_PI); //u value (theta)
+			vt[tIndex+7] = (Pij[1]+1)/2; //v value
+
+			vt[tIndex+8] = j*(2*M_PI/stepsT)/(2*M_PI); //u value (theta)
+			vt[tIndex+9] = (Piij[1]+1)/2; //v value
+
+			vt[tIndex+10] = (j+1)*(2*M_PI/stepsT)/(2*M_PI); //u value (theta)
+			vt[tIndex+11] = (Piijj[1]+1)/2; //v value
     }
 }
 
