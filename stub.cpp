@@ -134,23 +134,7 @@ void calculateTextureCoordinates(const GLfloat* vertexList, std::vector<glm::vec
         texCoordsVector.push_back(glm::vec2(u, v));
 
 	
-	    		vt[tIndex+0] = (j*(2*M_PI/stepsT))/(2*M_PI); //u value (theta)
-			vt[tIndex+1] = (Pij[1]+1)/2; //v value
-
-			vt[tIndex+2] = (j+1)*(2*M_PI/stepsT)/(2*M_PI); //u value (theta)
-			vt[tIndex+3] = (Piijj[1]+1)/2; //v value
-
-			vt[tIndex+4] = (j+1)*(2*M_PI/stepsT)/(2*M_PI); //u value (theta)
-			vt[tIndex+5] = (Pijj[1]+1)/2; //v value
-
-			vt[tIndex+6] = j*(2*M_PI/stepsT)/(2*M_PI); //u value (theta)
-			vt[tIndex+7] = (Pij[1]+1)/2; //v value
-
-			vt[tIndex+8] = j*(2*M_PI/stepsT)/(2*M_PI); //u value (theta)
-			vt[tIndex+9] = (Piij[1]+1)/2; //v value
-
-			vt[tIndex+10] = (j+1)*(2*M_PI/stepsT)/(2*M_PI); //u value (theta)
-			vt[tIndex+11] = (Piijj[1]+1)/2; //v value
+	    		
     }
 }
 
