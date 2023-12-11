@@ -1,5 +1,4 @@
 /*#version 410
-
 in vec3 FragPos;
 in vec3 Normal;
 in vec2 TexCoords;
@@ -7,7 +6,6 @@ in vec3 LightPosInView;
 
 uniform vec3 lightPos;
 uniform vec3 viewPos;
-
 
 uniform bool enableTexture = true;
 uniform bool enableSpecular = true;
@@ -22,7 +20,6 @@ out vec4 fragment_color;
 
 void main()
 {
-
     // Ambient lighting
     float ambientStrength = 0.1;
     vec3 ambient = ambientStrength * vec3(1.0, 1.0, 1.0);
@@ -35,8 +32,10 @@ void main()
     // Specular lighting (Blinn-Phong)
     float specularStrength = 0.5;
     float shininess = 32.0;
+
     vec3 viewDir = normalize(viewPos - FragPos); 
     vec3 halfwayDir = normalize(lightDir + viewDir);
+
     float spec = pow(max(dot(Normal, halfwayDir), 0.0), specularExponent);
     vec3 specular = specularStrength * spec * vec3(1.0, 1.0, 1.0);
 
@@ -50,7 +49,6 @@ void main()
 
     // Combine textures with lighting
     vec3 result = (ambient + diffuse + specular) * mix(texColor0, texColor1, 0.5);
-
     fragment_color = vec4(result, 1.0);
 }*/
 
@@ -108,9 +106,7 @@ void main()
     if (enableSpecular) {
         result += specular;
     }
-    //result *= texture2D(texture00, TexCoords);
+    result *= mix(texColor0, texColor1, 0.5);
 
-    fragment_color = vec4(result, 1.0) * (texture2D(texture00, TexCoords));
+    fragment_color = vec4(result, 1.0);
 }
-
-
