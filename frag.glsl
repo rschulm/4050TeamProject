@@ -108,9 +108,9 @@ void main()
     if (enableSpecular) {
         result += specular;
     }
-    result *= texture2D(texture00, TexCoords);
+    //result *= texture2D(texture00, TexCoords);
 
-    fragment_color = vec4(result, 1.0);
+    fragment_color = vec4(result, 1.0) * (texture2D(texture00, TexCoords));
 }
 
 
