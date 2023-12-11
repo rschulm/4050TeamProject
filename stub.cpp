@@ -214,25 +214,40 @@ void loadSurfaceOfRevolution()
 	}
 
 	GLfloat vertexList[triangleList.size() * 9]; // 3 vertices per triangle, each with 3 coordinates
+	GLfloat textureList[trianleList.size() * 6];
 	for (int i = 0; i < triangleList.size(); i++) {
 		// First vertex
 		vertexList[i * 9] = triangleList[i].vertexOne.x;
 		vertexList[i * 9 + 1] = triangleList[i].vertexOne.y;
 		vertexList[i * 9 + 2] = triangleList[i].vertexOne.z;
 
+		textureList[i * 6] = (i*2)*(2*M_PI/numStepsTheta)/(2*M_PI);
+		textureList[i * 6 + 1] = ((triangleList[i].vertexOne.y) + 1)/2;
+
 		// Second vertex
 		vertexList[i * 9 + 3] = triangleList[i].vertexTwo.x;
 		vertexList[i * 9 + 4] = triangleList[i].vertexTwo.y;
 		vertexList[i * 9 + 5] = triangleList[i].vertexTwo.z;
 
+		textureList[i * 6 + 2] = ((i+1)*2)*(2*M_PI/numStepsTheta)/(2*M_PI);
+		textureList[i * 6 + 3] = ((triangleList[i].vertexTwo.y) + 1)/2;
+
 		// Third vertex
 		vertexList[i * 9 + 6] = triangleList[i].vertexThree.x;
 		vertexList[i * 9 + 7] = triangleList[i].vertexThree.y;
 		vertexList[i * 9 + 8] = triangleList[i].vertexThree.z;
+
+		if(i%2 == 0){
+			textureList[i * 6 + 4] = (i*2)*(2*M_PI/numStepsTheta)/(2*M_PI);
+		}
+		else{
+			textureList[i * 6 + 4] = ((i+1)*2)*(2*M_PI/numStepsTheta)/(2*M_PI);
+		}
+		textureList[i * 6 + 5] = ((triangleList[i].vertexThree.y) + 1)/2;
 	}
 
 	pointCount = triangleList.size() * 9; // Set the correct amount of points for drawSurfaceOfRevolution() later
-	
+	texturePointCount = triangleList.size() * 6;
 	
 	// VAO -- vertex attribute objects bundle the various things associated with vertices
 	GLuint vao;
@@ -276,7 +291,7 @@ void loadSurfaceOfRevolution()
 	GLuint texCoord_vbo;
 	glGenBuffers(1, &texCoord_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, texCoord_vbo);
-	glBufferData(GL_ARRAY_BUFFER, texCoordsVector.size() * sizeof(float), &texCoordsVector[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, texturePointCount * sizeof (GLfloat), textureList, GL_STATIC_DRAW);
 	
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(2);
