@@ -1,112 +1,49 @@
-/*#version 410
-in vec3 FragPos;
-in vec3 Normal;
-in vec2 TexCoords;
-in vec3 LightPosInView;
-
-uniform vec3 lightPos;
-uniform vec3 viewPos;
-
-uniform bool enableTexture = true;
-uniform bool enableSpecular = true;
-uniform bool enableDiffuse = true;
-
-uniform float specularExponent;
-
-uniform sampler2D texture00;
-uniform sampler2D texture01;
-
-out vec4 fragment_color;
-
-void main()
-{
-    // Ambient lighting
-    float ambientStrength = 0.1;
-    vec3 ambient = ambientStrength * vec3(1.0, 1.0, 1.0);
-
-    // Diffuse lighting
-    vec3 lightDir = normalize(lightPos - FragPos); 
-    float diff = max(dot(Normal, lightDir), 0.0);
-    vec3 diffuse = diff * vec3(1.0, 1.0, 1.0);
-
-    // Specular lighting (Blinn-Phong)
-    float specularStrength = 0.5;
-    float shininess = 32.0;
-
-    vec3 viewDir = normalize(viewPos - FragPos); 
-    vec3 halfwayDir = normalize(lightDir + viewDir);
-
-    float spec = pow(max(dot(Normal, halfwayDir), 0.0), specularExponent);
-    vec3 specular = specularStrength * spec * vec3(1.0, 1.0, 1.0);
-
-    // Sample textures
-    vec3 texColor0 = texture(texture00, TexCoords).xyz;
-    vec3 texColor1 = texture(texture01, TexCoords).xyz;
-
-    // Debug: Output texture colors
-    //fragment_color = vec4(texColor0, 1.0); // Debug check color
-    //fragment_color = vec4(1.0,0.5,0.0,1.0);
-
-    // Combine textures with lighting
-    vec3 result = (ambient + diffuse + specular) * mix(texColor0, texColor1, 0.5);
-    fragment_color = vec4(result, 1.0);
-}*/
-
-
-
 #version 410
 
-in vec3 FragPos;
-in vec3 Normal;
-in vec2 TexCoords;
-in vec3 LightPosInView;
+// Define INPUTS from fragment shader
+uniform mat4 view_mat;
 
-uniform vec3 lightPos;
-uniform vec3 viewPos;
+smooth in vec3 lightContrib;
+in vec2 texture_coords;
+in vec3 frag_Position;
+in vec3 normal;
 
-uniform bool enableTexture;
-uniform bool enableSpecular;
-uniform bool enableDiffuse;
-
-uniform float specularExponent;
-
+// And from the uniform outputs for the textures setup in main.cpp.
 uniform sampler2D texture00;
 uniform sampler2D texture01;
+uniform vec3 light_position;
+uniform vec3 light_color;
+uniform float shininess;
+uniform bool useText;
+uniform bool useSpec;
+uniform bool useDiff;
 
-out vec4 fragment_color;
+out vec4 fragment_color; //RGBA color
+void main () {
+    float toonLevels = 4.0;
+    float toonThreshold = 1.0 / toonLevels;
+    vec3 lightDir = normalize(light_position - frag_Position);
+	vec3 viewDir = normalize(vec3(0.0, 0.0, 10.0) - frag_Position);
+	vec3 halfwayDir = normalize(lightDir + viewDir);
+	float ambientStrength = 0.2;
 
-void main()
-{
-    // Ambient lighting
-    float ambientStrength = 0.2;
-    vec3 ambient = ambientStrength * vec3(1.0, 1.0, 1.0);
+    float specFactor = pow(max(dot(normal, halfwayDir), 0.0), shininess);
+    float specToonFactor = floor(specFactor * toonLevels) / toonLevels;
+	vec3 specular = light_color * specToonFactor;
 
-    // Diffuse lighting
-    vec3 lightDir = normalize(lightPos - FragPos); 
-    float diff = max(dot(Normal, lightDir), 0.0);
-    vec3 diffuse = diff * vec3(1.0, 1.0, 1.0);
+    float diffFactor = max(dot(normal, lightDir), 0.0);
+    float diffToonFactor = floor(diffFactor * toonLevels) / toonLevels;
+    vec3 diffuse = light_color * diffToonFactor;
 
-    // Specular lighting (Blinn-Phong)
-    float specularStrength = 0.5;
-    float shininess = 32.0;
-    vec3 viewDir = normalize(viewPos - FragPos); 
-    vec3 halfwayDir = normalize(lightDir + viewDir);
-    float spec = pow(max(dot(Normal, halfwayDir), 0.0), specularExponent);
-    vec3 specular = specularStrength * spec * vec3(1.0, 1.0, 1.0);
+	vec3 ambient = light_color * ambientStrength;
 
-    // Sample textures only if enableTexture is true
-    vec3 texColor0 = enableTexture ? texture(texture00, TexCoords).xyz : vec3(1.0);
-    vec3 texColor1 = enableTexture ? texture(texture01, TexCoords).xyz : vec3(1.0);
-
-    // Combine textures with lighting only if enableDiffuse or enableSpecular is true
-    vec3 result = ambient;
-    if (enableDiffuse) {
-        result += diffuse;
+	vec3 lightContrib = ambient;
+    if(useSpec) {lightContrib += specular;}
+    if(useDiff) {lightContrib += diffuse;}
+    if(useText) {
+        fragment_color = texture2D(texture00, texture_coords)  * vec4(lightContrib, 1.0);
     }
-    if (enableSpecular) {
-        result += specular;
+    else{
+        fragment_color = vec4(1.0, 0.5, 0.0, 1.0) * vec4(lightContrib, 1.0);
     }
-    result *= mix(texColor0, texColor1, 0.5);
-
-    fragment_color = vec4(result, 1.0);
 }
