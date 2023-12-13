@@ -1,5 +1,9 @@
 Instructions for Use:
-The .zip file contains a folder named “teamProj” which contains two more folders, “common” and “main”. Enter the “main” folder and compile using “make”. Once the program is compiled, execute with the command “./cg05 vs.glsl frag.glsl” in order to pass in the required vertex and fragment shaders. Once executed, a window containing the toon shaded sphere will appear. In order to manipulate the lighting and texture, use the keys shown in the appendix below.
+The .zip file contains a folder named “teamProj” which contains two more folders, “common” and “main”. 
+Enter the “main” folder and compile using “make”. Once the program is compiled, 
+execute with the command “./cg05 vs.glsl frag.glsl” in order to pass in the required 
+vertex and fragment shaders. Once executed, a window containing the toon shaded 
+sphere will appear. In order to manipulate the lighting and texture, use the keys shown in the appendix below.
 
 Keyboard Interactivity:
 Key
